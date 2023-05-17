@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+
+    <title>7조 - 소개페이지</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      * {
+        font-family: "Gowun Dodum", sans-serif;
+      }
+
+      .mytitle {
+        width: 100%;
+        height: 250px;
+
+        background-image: linear-gradient(
+            0deg,
+            rgba(0, 0, 0, 0.5),
+            rgba(0, 0, 0, 0.5)
+          ),
+          url("https://movie-phinf.pstatic.net/20210715_95/1626338192428gTnJl_JPEG/movie_image.jpg");
+        background-position: center;
+        background-size: cover;
+
+        color: white;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .mytitle > button {
+        width: 200px;
+        height: 50px;
+
+        background-color: transparent;
+        color: white;
+
+        border-radius: 50px;
+        border: 1px solid white;
+
+        margin-top: 10px;
+      }
+
+      .mytitle > button:hover {
+        border: 2px solid white;
+      }
+
+      .mycomment {
+        color: gray;
+      }
+
+      .mycards {
+        margin: 20px auto 0px auto;
+        width: 95%;
+        max-width: 1200px;
+      }
+
+      .mypost {
+        width: 95%;
+        max-width: 500px;
+        margin: 20px auto 0px auto;
+        padding: 20px;
+        box-shadow: 0px 0px 3px 0px gray;
+
+        display: none;
+      }
+
+      .mybtns {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+
+        margin-top: 20px;
+      }
+      .mybtns > button {
+        margin-right: 10px;
+      }
+    </style>
+    <script>
+      $(document).ready(function () {
+        listing();
+      });
+
+      function listing() {
+        fetch("/member")
+          .then((res) => res.json())
+          .then((data) => {
+            let rows = data["result"];
+            $("#cards-box").empty();
+
+            rows.forEach((a) => {
+              // 수정
+              console.log(a);
+              let image = a["url"];
+              let name = a["name"];
+              let age = a["age"];
+              let mbti = a["mbti"];
+              let comment = a["comment"];
+
+              let temp_html = `<div class="col">
+                                  <div class="card h-100">
+                                    <a href="#">
+                                      <img
+                                      src="${image}"
+                                      class="card-img-top"
+                                      />
+                                    </a>
+                                    <div class="card-body">
+                                      <h5 class="card-title">${name}</h5>
+                                      <p class="card-text">나이 : ${age}</p>
+                                      <p class="card-text">mbti : ${mbti}</p>
+                                      <p class="mycomment">"${comment}"</p>
+                                    </div>
+                                  </div>
+                                </div>`;
+
+              $("#cards-box").append(temp_html);
+            });
+          });
+      }
+
+      function posting() {
+        // 추가
+        let url = $("#url").val();
+        let name = $("#name").val();
+        let age = $("#age").val();
+        let mbti = $("#mbti").val();
+        let comment = $("#comment").val();
+        let intro = $("#intro").val();
+
+        let formData = new FormData();
+        formData.append("url_give", url);
+        formData.append("name_give", name);
+        formData.append("age_give", age);
+        formData.append("mbti_give", mbti);
+        formData.append("comment_give", comment);
+        formData.append("intro_give", intro);
+
+        fetch("/member", { method: "POST", body: formData })
+          .then((res) => res.json())
+          .then((data) => {
+            alert(data["msg"]);
+          });
+      }
+
+      function open_box() {
+        $("#post-box").show();
+      }
+      function close_box() {
+        $("#post-box").hide();
+      }
+    </script>
+  </head>
+
+  <body>
+    <div class="mytitle">
+      <h1>7조를 소개합니다</h1>
+      <button onclick="open_box()">팀원 추가하기</button>
+    </div>
+    <div class="mypost" id="post-box">
+      <div class="form-floating mb-3">
+        <input
+          id="url"
+          type="text"
+          class="form-control"
+          placeholder="이미지 주소를 입력해주세요"
+        />
+        <label>Image URL</label>
+      </div>
+
+      <!-- <div class="input-group mb-3">
+        <label class="input-group-text" for="inputGroupSelect01">별점</label>
+        <select class="form-select" id="star">
+          <option selected>-- 선택하기 --</option>
+          <option value="1">⭐</option>
+          <option value="2">⭐⭐</option>
+          <option value="3">⭐⭐⭐</option>
+          <option value="4">⭐⭐⭐⭐</option>
+          <option value="5">⭐⭐⭐⭐⭐</option>
+        </select>
+      </div> -->
+
+      <!-- 이름 -->
+      <div class="form-floating mb-3">
+        <input
+          id="name"
+          type="text"
+          class="form-control"
+          placeholder="이름 입력"
+        />
+        <label>이름</label>
+      </div>
+      <!-- 나이 -->
+      <div class="form-floating mb-3">
+        <input
+          id="age"
+          type="text"
+          class="form-control"
+          placeholder="나이 입력"
+        />
+        <label>나이</label>
+      </div>
+      <!-- mbti -->
+      <div class="form-floating mb-3">
+        <input
+          id="mbti"
+          type="text"
+          class="form-control"
+          placeholder="mbti 입력"
+        />
+        <label>mbti</label>
+      </div>
+
+      <div class="form-floating">
+        <textarea
+          id="comment"
+          class="form-control"
+          placeholder="Leave a comment here"
+        ></textarea>
+        <label for="floatingTextarea2">코멘트</label>
+      </div>
+      <div class="form-floating mt-md-2">
+        <textarea
+          id="intro"
+          class="form-control"
+          placeholder="Leave a comment here"
+        ></textarea>
+        <label for="floatingTextarea2">소개글</label>
+      </div>
+      <div class="mybtns">
+        <button onclick="posting()" type="button" class="btn btn-dark">
+          기록하기
+        </button>
+        <button
+          onclick="close_box()"
+          type="button"
+          class="btn btn-outline-dark"
+        >
+          닫기
+        </button>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="row mt-md-5">
+        <div class="col-8">
+          <p class="card-text">
+            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quis
+            ipsam, quibusdam magni hic eum libero recusandae consequatur laborum
+            voluptatum fugiat tempora animi iste consectetur rem soluta ducimus
+            veritatis. Ad, ullam.
+            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quis
+            ipsam, quibusdam magni hic eum libero recusandae consequatur laborum
+            voluptatum fugiat tempora animi iste consectetur rem soluta ducimus
+            veritatis. Ad, ullam.
+          </p>
+        </div>
+        <div class="col-4">
+          <img
+            src="http://placehold.it/400x300"
+            class="img-thumbnail"
+            alt="..."
+          />
+        </div>
+      </div>
+    <div class="container">
+      <div class="row mt-md-5">
+        <div class="col-4">
+          <img
+            src="http://placehold.it/400x300"
+            class="img-thumbnail"
+            alt="..."
+          />
+        </div>
+        <div class="col-8">
+          <p class="card-text">
+            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quis
+            ipsam, quibusdam magni hic eum libero recusandae consequatur laborum
+            voluptatum fugiat tempora animi iste consectetur rem soluta ducimus
+            veritatis. Ad, ullam.
+            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quis
+            ipsam, quibusdam magni hic eum libero recusandae consequatur laborum
+            voluptatum fugiat tempora animi iste consectetur rem soluta ducimus
+            veritatis. Ad, ullam.     
+          </p>
+        </div>        
+      </div>
+    </div>
+
+    <!-- card -->
+    <div class="mycards mt-md-5">
+      <div class="row row-cols-1 row-cols-md-4 g-4" id="cards-box">
+        <div class="col">
+          <div class="card h-100">
+            <img
+              src="https://movie-phinf.pstatic.net/20210728_221/1627440327667GyoYj_JPEG/movie_image.jpg"
+              class="card-img-top"
+            />
+            <div class="card-body">
+              <h5 class="card-title">영화 제목이 들어갑니다</h5>
+              <p class="card-text">여기에 영화에 대한 설명이 들어갑니다.</p>
+              <p>⭐⭐⭐</p>
+              <p class="mycomment">나의 한줄 평을 씁니다</p>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card h-100">
+            <img
+              src="https://movie-phinf.pstatic.net/20210728_221/1627440327667GyoYj_JPEG/movie_image.jpg"
+              class="card-img-top"
+            />
+            <div class="card-body">
+              <h5 class="card-title">영화 제목이 들어갑니다</h5>
+              <p class="card-text">여기에 영화에 대한 설명이 들어갑니다.</p>
+              <p>⭐⭐⭐</p>
+              <p class="mycomment">나의 한줄 평을 씁니다</p>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card h-100">
+            <img
+              src="https://movie-phinf.pstatic.net/20210728_221/1627440327667GyoYj_JPEG/movie_image.jpg"
+              class="card-img-top"
+            />
+            <div class="card-body">
+              <h5 class="card-title">영화 제목이 들어갑니다</h5>
+              <p class="card-text">여기에 영화에 대한 설명이 들어갑니다.</p>
+              <p>⭐⭐⭐</p>
+              <p class="mycomment">나의 한줄 평을 씁니다</p>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card h-100">
+            <img
+              src="https://movie-phinf.pstatic.net/20210728_221/1627440327667GyoYj_JPEG/movie_image.jpg"
+              class="card-img-top"
+            />
+            <div class="card-body">
+              <h5 class="card-title">영화 제목이 들어갑니다</h5>
+              <p class="card-text">여기에 영화에 대한 설명이 들어갑니다.</p>
+              <p>⭐⭐⭐</p>
+              <p class="mycomment">나의 한줄 평을 씁니다</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>
