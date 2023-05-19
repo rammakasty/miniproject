@@ -5,7 +5,7 @@ app = Flask(__name__)
 from pymongo import MongoClient
 
 client = MongoClient(
-    "mongodb+srv://sparta:test@cluster0.snrvzql.mongodb.net/?retryWrites=true&w=majority"
+    "mongodb+srv://sparta:test@cluster0.zgnywsh.mongodb.net/?retryWrites=true&w=majority"
 )
 db = client.dbsparta
 
@@ -17,10 +17,21 @@ db = client.dbsparta
 def home():
     return render_template("index.html")
 
-@app.route("/detail2")
-def detail2():
-    return render_template("detail2.html")
 
+# 라우트 추가 - 방두현
+@app.route("/방두현")
+def doohyeon():
+    return render_template("doohyeon.html")
+
+
+# 라우트 추가 - 장봉준
+@app.route("/장봉준")
+def bongjun():
+    return render_template("bongjun.html")
+
+@app.route("/최하영")
+def hayoung():
+    return render_template("hayoung.html")
 
 
 @app.route("/member", methods=["POST"])
@@ -47,22 +58,63 @@ def member_post():
         # "title": ogtitle,
         # "desc": ogdesc,
         # "image": ogimage,
-        "url" : url_receive,
+        "url": url_receive,
         "name": name_receive,
-        "age":age_receive,
-        "mbti":mbti_receive,
+        "age": age_receive,
+        "mbti": mbti_receive,
         "comment": comment_receive,
-        "intro" : intro_receive,
+        "intro": intro_receive,
     }
     db.members.insert_one(doc)
 
     return jsonify({"msg": "저장 완료!"})
 
 
+# 멤버 데이터 불러오기
 @app.route("/member", methods=["GET"])
 def member_get():
     all_members = list(db.members.find({}, {"_id": False}))
-    return jsonify({"result": all_members})
+    # doohyeon = list(db.members.find_one({"name": "방두현"}, {"_id": False}))
+    # doohyeon = db.members.find_one({"name": "방두현"})
+    # bongjun = db.members.find_one({"bongjun": "장봉준"})
+    return jsonify(
+        {
+            "result": all_members,
+            # "doohyeon": doohyeon,
+            # "bongjun": bongjun,
+        }
+    )
+
+
+# 방두현 데이터 불러오기
+@app.route("/doohyeon", methods=["GET"])
+def doohyeon_get():
+    doohyeon = list(db.members.find({"name": "방두현"}, {"_id": False}))
+    return jsonify({"result": doohyeon})
+
+@app.route("/doohyeon", methods=["GET"])
+def hayoung_get():
+    hayoung = list(db.members.find({"name": "최하영"}, {"_id": False}))
+    return jsonify({"result": hayoung})
+
+
+# 삭제 기능 추가
+@app.route("/delete_member", methods=["POST"])
+def delete_member():
+    delete_name_receive = request.form["delete_name_give"]
+    db.members.delete_one({"name": delete_name_receive})
+
+
+# 수정 기능 추가
+@app.route("/update_intro", methods=["PUT"])
+def update_intro():
+    name_receive = request.form["name_give"]
+    update_intro_receive = request.form["update_text_give"]
+    db.members.update_one(
+        {"name": name_receive}, {"$set": {"intro": update_intro_receive}}
+    )
+
+
 
 
 if __name__ == "__main__":

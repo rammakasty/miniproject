@@ -101,6 +101,30 @@
       .mybtns > button {
         margin-right: 10px;
       }
+
+      /* 모달창 스타일 */
+      .delete-modal {
+        display: none;
+        width : 100%;
+        height : 100%;
+        background : rgba(0,0,0,0.5);
+        position : fixed;
+        z-index : 3;
+      }
+      .form {
+        background: white;
+        border-radius: 5px;
+        padding: 40px;
+        position: fixed;
+        top: 60%;
+        left: 40%;
+      } 
+      /* 모달창 열고닫기 */
+      .show {
+        display: block;
+      }
+
+
     </style>
     <script>
       $(document).ready(function () {
@@ -115,7 +139,7 @@
             $("#cards-box").empty();
 
             rows.forEach((a) => {
-              // 수정
+              // 데이터 바인딩 
               console.log(a);
               let image = a["url"];
               let name = a["name"];
@@ -125,7 +149,7 @@
 
               let temp_html = `<div class="col">
                                   <div class="card h-100">
-                                    <a href="#">
+                                    <a href="${name}">
                                       <img
                                       src="${image}"
                                       class="card-img-top"
@@ -136,17 +160,16 @@
                                       <p class="card-text">나이 : ${age}</p>
                                       <p class="card-text">mbti : ${mbti}</p>
                                       <p class="mycomment">"${comment}"</p>
-                                    </div>
+                                      </div>                                      
                                   </div>
                                 </div>`;
-
               $("#cards-box").append(temp_html);
             });
           });
       }
 
       function posting() {
-        // 추가
+        // 추가 데이터
         let url = $("#url").val();
         let name = $("#name").val();
         let age = $("#age").val();
@@ -167,6 +190,32 @@
           .then((data) => {
             alert(data["msg"]);
           });
+        window.location.reload();
+      }
+
+      // 삭제 모달창의 전송 버튼
+      function delete_btn(){
+        let delete_name = $("#delete_name").val();
+
+        let formData = new FormData();
+        formData.append("delete_name_give", delete_name);
+
+        fetch("/delete_member", { method: "POST", body: formData })
+          .then((res) => res.json())
+          .then((data) => {
+            alert(data["msg"]);
+          });
+          window.location.reload();
+      }
+
+
+      // 삭제-모달창 열기
+      function modal_open(){
+        $('.delete-modal').addClass('show');      
+      }
+      // 삭제-모달창 닫기
+      function modal_close(){
+        $('.delete-modal').removeClass('show');      
       }
 
       function open_box() {
@@ -179,6 +228,25 @@
   </head>
 
   <body>
+
+    <!-- 삭제 모달창 -->
+    <div class="delete-modal">
+      <div class="form">
+        <div class="form-floating mb-3">
+            <p>삭제할 팀원 이름을 입력해주세요</p>
+            <input
+              id="delete_name"
+              type="text"
+              class="form-control"
+              placeholder="삭제할 팀원명"
+            />
+          </div>
+          <button onclick="delete_btn()" type="button" class="btn btn-primary">전송</button>
+          <button onclick="modal_close()" class="btn btn-danger">닫기</button>
+      </div>
+    </div> 
+
+
     <div class="mytitle">
       <h1>7조를 소개합니다</h1>
       <button onclick="open_box()">팀원 추가하기</button>
@@ -245,6 +313,7 @@
         ></textarea>
         <label for="floatingTextarea2">코멘트</label>
       </div>
+      <!-- 소개글 -->
       <div class="form-floating mt-md-2">
         <textarea
           id="intro"
@@ -267,6 +336,8 @@
       </div>
     </div>
 
+
+    <!-- 팀원 소개 -->
     <div class="container">
       <div class="row mt-md-5">
         <div class="col-8">
@@ -314,7 +385,7 @@
     </div>
 
     <!-- card -->
-    <div class="mycards mt-md-5">
+    <div class="mycards mt-5" style="margin-bottom: 50px;">
       <div class="row row-cols-1 row-cols-md-4 g-4" id="cards-box">
         <div class="col">
           <div class="card h-100">
@@ -330,53 +401,18 @@
             </div>
           </div>
         </div>
-        <div class="col">
-          <div class="card h-100">
-            <img
-              src="https://movie-phinf.pstatic.net/20210728_221/1627440327667GyoYj_JPEG/movie_image.jpg"
-              class="card-img-top"
-            />
-            <div class="card-body">
-              <h5 class="card-title">영화 제목이 들어갑니다</h5>
-              <p class="card-text">여기에 영화에 대한 설명이 들어갑니다.</p>
-              <p>⭐⭐⭐</p>
-              <p class="mycomment">나의 한줄 평을 씁니다</p>
-            </div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="card h-100">
-            <img
-              src="https://movie-phinf.pstatic.net/20210728_221/1627440327667GyoYj_JPEG/movie_image.jpg"
-              class="card-img-top"
-            />
-            <div class="card-body">
-              <h5 class="card-title">영화 제목이 들어갑니다</h5>
-              <p class="card-text">여기에 영화에 대한 설명이 들어갑니다.</p>
-              <p>⭐⭐⭐</p>
-              <p class="mycomment">나의 한줄 평을 씁니다</p>
-            </div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="card h-100">
-            <img
-              src="https://movie-phinf.pstatic.net/20210728_221/1627440327667GyoYj_JPEG/movie_image.jpg"
-              class="card-img-top"
-            />
-            <div class="card-body">
-              <h5 class="card-title">영화 제목이 들어갑니다</h5>
-              <p class="card-text">여기에 영화에 대한 설명이 들어갑니다.</p>
-              <p>⭐⭐⭐</p>
-              <p class="mycomment">나의 한줄 평을 씁니다</p>
-            </div>
-          </div>
-        </div>
       </div>
+      <!-- 삭제 모달창 열기 버튼 추가 -->
+      <button onclick="modal_open()" type="button" class="btn btn-danger" style="width:80px; margin-top:20px">삭제</button>
     </div>
 
-
-    <button type="button" onClick="location='detail2.html'">버튼</button>
-
+    <script>
+      // 검은 배경화면 클릭시 모달창 닫기
+      document.querySelector('.delete-modal').addEventListener('click', function(e){
+        if (e.target == document.querySelector('.delete-modal')) {
+          document.querySelector('.delete-modal').classList.remove('show');
+        }
+      })
+    </script>
   </body>
 </html>

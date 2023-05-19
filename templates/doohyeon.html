@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap"
+      rel="stylesheet"
+    />
+    <title>개인소개 - 방두현</title>
+
+    <style>
+      * {
+        font-family: "Gowun Dodum", sans-serif;
+      }
+
+      .card {
+        margin-left: 2%;
+      }
+
+      .cardborder {
+        max-height: 90%;
+        word-break: break-all;
+        overflow-y: scroll;
+      }
+
+      .background_top {
+        height: 200px;
+        /* background-image: url('https://img.freepik.com/premium-photo/blue-sky-with-cloud-in-sunshine-day_45004-123.jpg');
+            background-position: center;
+            background-size: cover; */
+
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        justify-content: center;
+      }
+
+      .make_bg {
+        width: 100%;
+        height: 100%;
+        padding-top: 47.5px;
+        padding-bottom: 47.5px;
+        /* background-image: url('https://cdn.imweb.me/upload/S202207202685e30f16e24/8b48c67f8cdf6.jpeg');
+            background-position: center;
+            background-size: cover; */
+      }
+
+      .bd_bg {
+        background-image: url("http://jjaltoon.gallery/wp-content/uploads/kboard_attached/4/201804/5ac5e8bd6d3ff5689127.png");
+        background-position: center;
+        background-size: cover;
+      }
+
+      .title {
+        width: 40%;
+        height: 120px;
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        justify-content: center;
+        padding-top: 8px;
+        /* margin: 40px auto 20px auto; */
+        margin-left: 7%;
+        padding-left: 4%;
+
+        border: 3px solid white;
+        border-radius: 50px;
+      }
+
+      .mainContents {
+        height: 450px;
+
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .img {
+        width: 15%;
+        image-rendering: crisp-edges;
+        margin-right: 2%;
+        border: 2px solid black;
+        border-radius: 5px;
+      }
+
+      .intro_container {
+        border: 1px solid gray;
+        border-radius: 10px;
+        word-break: break-all;
+        width: 50%;
+        height: 90%;
+        overflow-y: scroll;
+      }
+      /* 
+        .gray_bg {
+            margin-left: 4%;
+            width: 50vw;
+            height: 80%;
+            opacity: 0.5;
+            background-color: gray;
+        } */
+
+      .post_btn_wrap {
+        margin-left: 65%;
+      }
+
+      /* 수정 모달창 */
+      .update-modal {
+        display: none;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        position: fixed;
+        z-index: 3;
+      }
+      .form {
+        width: 50%;
+        background: white;
+        border-radius: 5px;
+        padding: 40px;
+        position: fixed;
+        top: 40%;
+        left: 20%;
+      }
+      #textarea {
+        width: 100%;
+        height: 30px;
+      }
+
+      /* 모달창 열고닫기 */
+      .show {
+        display: block;
+      }
+    </style>
+
+    <script>
+      $(document).ready(function () {
+        show_top_name();
+      });
+
+      function show_top_name() {
+        fetch("/doohyeon")
+          .then((res) => res.json())
+          .then((data) => {
+            let rows = data["result"];
+            console.log(rows);
+
+            rows.forEach((a) => {
+              let intro = a["intro"];
+              let mbti = a["mbti"];
+              let comment = a["comment"];
+
+              let temp_html = `<span style="font-weight: bold">
+                                  <p class="intro_text">
+                                    ${intro}
+                                  </p>
+                                </span>`;
+              let temp_html2 = `<div class="card-body">
+                                  <p id="mbti">${mbti}</p>
+                                  <p id="one_comment">${comment}</p>
+                                </div>`;
+
+              $(".intro_container").append(temp_html);
+              $(".card-header").append(temp_html2);
+            });
+          });
+      }
+
+      // 수정 모달창 열기
+      function modal_open() {
+        $(".update-modal").addClass("show");
+      }
+      // 수정 모달창 닫기
+      function modal_close() {
+        $(".update-modal").removeClass("show");
+      }
+    </script>
+  </head>
+
+  <body class="bd_bg">
+    <!-- 수정 모달창 -->
+    <div class="update-modal">
+      <div class="form">
+        <div class="form-floating mb-3">
+          <h3>소개글 수정</h3>
+          <textarea
+            id="update_text"
+            class="form-control"
+            placeholder="수정할 내용"
+          ></textarea>
+        </div>
+        <button onclick="update_btn()" type="button" class="btn btn-primary">
+          전송
+        </button>
+        <button onclick="modal_close()" class="btn btn-danger">닫기</button>
+      </div>
+    </div>
+
+    <div class="background_top">
+      <div class="title">
+        <h1 id="name">방두현</h1>
+        <p>7조 - 포기안할조</p>
+      </div>
+    </div>
+    <div class="make_bg">
+      <div class="mainContents">
+        <img
+          class="img"
+          id="image"
+          src="https://github.com/devDHB/intro_pg/blob/main/pic_bang.jpg?raw=true
+          "
+          alt="No image"
+        />
+
+        <!-- temp_html -->
+        <div class="intro_container"></div>
+        <!-- <div class="gray_bg" style="position: relative; z-index: 1">
+            </div> -->
+
+        <div class="card">
+          <div class="cardborder" style="max-width: 17rem">
+            <!-- temp_html -->
+            <div class="card-header"><h3>태그</h3></div>
+            <!-- card-header 하위태그로 데이터 바인딩 -->
+            <!-- <div class="card-body">
+              <p id="mbti">*MBTI</p>
+              <p id="blog_address">*블로그 주소블로그 주소블로그 주소</p>
+              <p id="one_comment">*한마디</p>
+            </div> -->
+          </div>
+        </div>
+      </div>
+      <div class="post_btn_wrap">
+        <button
+          type="button"
+          onclick="modal_open()"
+          class="btn btn-outline-success"
+        >
+          수정
+        </button>
+        <!-- <button
+          type="button"
+          onclick="delete_btn()"
+          class="btn btn-outline-danger"
+        >
+          삭제
+        </button> -->
+      </div>
+    </div>
+
+    <script>
+      // 수정 모달창의 수정버튼 클릭 시 실행
+      function update_btn() {
+        let update_text = $("#update_text").val();
+        let name = $("#name").text();
+
+        console.log(update_text);
+        console.log(name);
+
+        let formData = new FormData();
+        formData.append("update_text_give", update_text);
+        formData.append("name_give", name);
+
+        fetch("/update_intro", { method: "PUT", body: formData })
+          .then((res) => res.json())
+          .then((data) => {
+            alert(data["msg"]);
+          });
+        window.location.reload();
+      }
+
+      // 수정 모달창 Textarea 자동 높이 조절
+      const DEFAULT_HEIGHT = 30; // textarea 기본 height
+      const $update_text = document.querySelector("#update_text");
+
+      $update_text.oninput = (e) => {
+        const $target = e.target;
+
+        $target.style.height = 0;
+        $target.style.height = DEFAULT_HEIGHT + $target.scrollHeight + "px";
+      };
+
+      // 검은 배경화면 클릭시 모달창 닫기
+      document
+        .querySelector(".update-modal")
+        .addEventListener("click", function (e) {
+          if (e.target == document.querySelector(".update-modal")) {
+            document.querySelector(".update-modal").classList.remove("show");
+          }
+        });
+    </script>
+  </body>
+</html>
